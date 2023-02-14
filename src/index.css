@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer {
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #bbf1f1;
+  }
+  ::-webkit-scrollbar-thumb {
+    border: 2px solid #bbf1f1;
+    @apply bg-teal-500/70 rounded-md;
+  }
+}
+
+.movieBox:hover > .info {
+  height: 60%;
+  transition: all 0.3s ease-in;
+  @apply bottom-0;
+}
+
+.loader {
+  animation: loading 0.5s linear infinite;
+}
+
+@keyframes loading {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
