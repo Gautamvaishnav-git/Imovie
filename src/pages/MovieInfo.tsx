@@ -5,6 +5,7 @@ import { IMovieInfo } from "../components/interfaces";
 import notAvailable from "../assets/notAvailable.webp";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import Loader from "../components/Loader";
 
 type info = IMovieInfo | null;
 
@@ -23,7 +24,6 @@ const MovieInfo = () => {
       setLoading(true);
       const { data } = await axios.get(URI);
       setInfo(data);
-      console.log(data);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -34,12 +34,7 @@ const MovieInfo = () => {
     fetchMovieInfo(uriStr);
   }, []);
 
-  if (loading)
-    return (
-      <div className="w-full h-[80vh] flex items-center justify-center">
-        <div className="loader w-20 h-20 border-t-2 border-teal-500 rounded-full"></div>
-      </div>
-    );
+  if (loading) return <Loader />;
 
   if (fetchError) return <div>Fetch Error... </div>;
   return (

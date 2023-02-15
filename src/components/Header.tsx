@@ -1,11 +1,14 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const Header = () => {
   return (
-    <div className="flex gap-4 bg-teal-500 text-white">
-      <Link to="/" className="px-4 py-2">
+    <div className="flex bg-teal-500 text-white">
+      <NavLink to="/" className="px-3 py-2 capitalize">
         Home
-      </Link>
+      </NavLink>
+      <NavLink to="/trending" className="px-3 py-2 capitalize">
+        trending
+      </NavLink>
     </div>
   );
 };
