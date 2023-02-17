@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { IMovie } from "../components/interfaces";
 
@@ -19,11 +18,11 @@ const MovieCard = ({ movieObj }: { movieObj: movieDataType }) => {
           alt="poster"
           draggable="false"
         />
-        <div className="info w-full h-full bg-gradient-to-t from-teal-600 absolute -bottom-[100%] pl-2 py-1 flex flex-col justify-end">
-          <h2 className="text-md text-white font-semibold w-4/5">
+        <div className="info w-full h-full bg-gradient-to-t from-slate-900 absolute -bottom-[100%] pl-2 py-1 flex flex-col justify-end">
+          <h2 className="text-md text-white w-4/5">
             {movieObj?.title}
           </h2>
-          <h3 className="text-sm text-gray-200">{movieObj?.release_date}</h3>
+          <h3 className="text-xs text-gray-300">{movieObj?.release_date}</h3>
         </div>
         <div className="absolute bottom-1 right-2 w-8 h-8 text-xs bg-transparent rounded-full flex items-center justify-center shadow border-2">
           <h1 className="text-white font-bold absolute">

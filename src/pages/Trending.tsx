@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
+import { Link } from "react-router-dom";
 import { IMovie } from "../components/interfaces";
 import Loader from "../components/Loader";
 import MovieCard from "../components/MovieCard";
@@ -11,11 +12,12 @@ const Trending = () => {
   const [trendingMovies, setTrendingMovies] = useState<trendingDataType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<boolean>(false);
+  let baseUri: string = import.meta.env.VITE_BASE_URL;
+  let apiKey: string = import.meta.env.VITE_API_KEY;
 
   const posterPrefix: string = import.meta.env.VITE_IMAGE_PREFIX;
-  const trendingUrl: string = `${
-    import.meta.env.VITE_BASE_URL
-  }/trending/movie/day?api_key=${import.meta.env.VITE_API_KEY}`;
+  const trendingUrl: string = `${baseUri}/trending/movie/day?api_key=${apiKey}`;
+
   const fetchTrending = async (url: string) => {
     try {
       setLoading(true);
@@ -59,9 +61,12 @@ const Trending = () => {
                 />
                 <div className="absolute bottom-0 h-1/2 w-full bg-gradient-to-t from-slate-900/50 flex flex-col justify-end items-start">
                   <div className="px-2 py-2">
-                    <p className="text-xl font-semibold text-teal-500 bg-slate-900 px-2 py-1 rounded">
+                    <Link
+                      to={`/movie/${String(trending?.id)}`}
+                      className="text-xl font-semibold text-teal-500 bg-slate-900 px-2 py-1 rounded"
+                    >
                       {trending?.title}
-                    </p>
+                    </Link>
                   </div>
                 </div>
               </div>

@@ -6,11 +6,24 @@ import notAvailable from "../assets/notAvailable.webp";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Loader from "../components/Loader";
+import useFetch from "../Hooks/useFetch";
 
 type info = IMovieInfo | null;
 
+type alternativeNames = {
+  iso_3166_1: string;
+  title: string;
+  type: string;
+} | null;
+
+type posters = {
+  file_path: string;
+} | null;
+
 const MovieInfo = () => {
   const [info, setInfo] = useState<info>(null);
+  const [altNames, setAltNames] = useState<alternativeNames[]>([]);
+  const [posters, setPosters] = useState<posters[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<boolean>(false);
   const apiKey: string = import.meta.env.VITE_API_KEY;
@@ -18,20 +31,47 @@ const MovieInfo = () => {
   const imageUrlPrefix: string = import.meta.env.VITE_IMAGE_PREFIX;
   const posterPrefix: string = import.meta.env.VITE_POSTER_PREFIX;
   const { id } = useParams();
-  const uriStr = `${baseUri}/movie/${id}?api_key=${apiKey}&language=en-US`;
-  const fetchMovieInfo = async (URI: string) => {
+  const infoUri: string = `${baseUri}/movie/${id}?api_key=${apiKey}&language=en-US`;
+  const alternativeNameUri: string = `${baseUri}/movie/${id}/alternative_titles?api_key=${apiKey}`;
+  const getMoviePostersUri: string = `${baseUri}/movie/${id}/images?api_key=${apiKey}`;
+
+  const fetchAndReturnGetData = async (URI: string) => {
     try {
-      setLoading(true);
       const { data } = await axios.get(URI);
-      setInfo(data);
-      setLoading(false);
+      return data;
     } catch (error) {
       setLoading(false);
       setFetchError(true);
     }
   };
+
+  const fetchMovieInfo = async (url: string) => {
+    try {
+      setLoading(true);
+      let infoData = await fetchAndReturnGetData(url);
+      setInfo(infoData);
+      setLoading(false);
+    } catch (error) {}
+  };
+
+  const setAlternativeNames = async (url: string) => {
+    try {
+      let names = await fetchAndReturnGetData(url);
+      setAltNames(names.titles);
+    } catch (error) {}
+  };
+
+  const getMoviePosters = async () => {
+    try {
+      let posters = await fetchAndReturnGetData(getMoviePostersUri);
+      setPosters(posters.backdrops);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    fetchMovieInfo(uriStr);
+    fetchMovieInfo(infoUri);
   }, []);
 
   if (loading) return <Loader />;
@@ -50,8 +90,60 @@ const MovieInfo = () => {
           alt="poster"
         />
       </div>
+      <div className="px-3 py-4 bg-slate-900">
+        <div className="space-y-2 mt-4 max-w-7xl mx-auto">
+          <h3 className="text-xl font-medium text-slate-900">
+            Productions Companies-
+          </h3>
+          <div className="flex gap-2 items-center flex-wrap justify-between">
+            {info?.production_companies.map((company) => {
+              return (
+                <img
+                  src={
+                    company.logo_path
+                      ? `${posterPrefix}/${company.logo_path}`
+                      : notAvailable
+                  }
+                  key={company.id}
+                  alt="company"
+                  className="w-1/4 grayscale hover:grayscale-0 duration-100"
+                />
+              );
+            })}
+          </div>
+        </div>
+        <div className="my-5 max-w-7xl mx-auto">
+          {posters.length === 0 && (
+            <button
+              className="bg-slate-900 hover:bg-slate-800 duration-150 border border-slate-800 hover:border-transparent py-2 px-3 rounded text-white"
+              onClick={getMoviePosters}
+            >
+              get posters
+            </button>
+          )}
+          <Carousel
+            showArrows={false}
+            showThumbs={false}
+            showStatus={false}
+            autoPlay
+            interval={2000}
+            infiniteLoop
+          >
+            {posters &&
+              posters.map((poster) => {
+                return (
+                  <img
+                    src={`${imageUrlPrefix}/${poster?.file_path}`}
+                    alt="poster"
+                    key={poster?.file_path}
+                  />
+                );
+              })}
+          </Carousel>
+        </div>
+      </div>
       <div className="w-full bg-slate-900 px-4 py-3 text-white">
-        <div className="max-w-7xl mx-auto h-full flex flex-col justify-end gap-3">
+        <div className="max-w-7xl mx-auto h-full flex flex-col  gap-3">
           <h1 className="text-2xl font-semibold">
             {info?.title}
             <span className="text-xs text-white bg-teal-900/80 px-2 py-1 ml-3 rounded font-normal">
@@ -99,11 +191,11 @@ const MovieInfo = () => {
             </div>
             <div className="flex justify-between border-b border-slate-600 py-1">
               <span className="font-medium">vote average</span>
-              <span className="text-teal-500">{info?.vote_average}</span>
+              <span className="text-teal-500">{info?.vote_count}</span>
             </div>
             <div className="flex justify-between border-b border-slate-600 py-1">
               <span className="font-medium">vote count</span>
-              <span className="text-teal-500">{info?.vote_count}</span>
+              <span className="text-teal-500">{info?.vote_average}</span>
             </div>
           </div>
           <a
@@ -114,55 +206,35 @@ const MovieInfo = () => {
             Go To Movie Homepage
           </a>
         </div>
-      </div>
-      <div className="px-3 py-4">
-        <div className="space-y-2 mt-4 max-w-7xl mx-auto">
-          <h3 className="text-xl font-medium text-slate-900">
-            Productions Companies-
-          </h3>
-          <div className="flex gap-2 items-center flex-wrap justify-between">
-            {info?.production_companies.map((company) => {
-              return (
-                <img
-                  src={`${posterPrefix}/${company.logo_path}`}
-                  key={company.id}
-                  alt="company"
-                  className="w-1/4 grayscale hover:grayscale-0 duration-100"
-                />
-              );
-            })}
-          </div>
-        </div>
-        <div className="my-5 max-w-7xl mx-auto">
-          <div className="flex gap-3 items-center">
-            <h3 className="text-xl font-medium text-slate-900 mb-3">
-              {info?.belongs_to_collection.name}
-            </h3>
-          </div>
-          <Carousel
-            showArrows={false}
-            showThumbs={false}
-            showIndicators={false}
-            showStatus={false}
-            autoPlay
-            interval={2000}
-            infiniteLoop
-          >
-            <div className="h-[80vh] overflow-hidden">
-              <img
-                src={`${imageUrlPrefix}/${info?.belongs_to_collection.backdrop_path}`}
-                alt="belong to path"
-                className="f-full"
-              />
+        <div className="flex flex-col gap-2 bg-slate-800 p-2 my-2 rounded max-w-7xl mx-auto">
+          {altNames.length === 0 && (
+            <button
+              className="px-4 py-2 hover:bg-slate-600 duration-150 capitalize w-fit rounded text-white border border-slate-700"
+              onClick={() => setAlternativeNames(alternativeNameUri)}
+            >
+              get alternative Names
+            </button>
+          )}
+          {altNames ? (
+            <>
+              <h1 className="text-2xl font-semibold">Alternate Names</h1>
+              {altNames.map((altName, index) => {
+                return (
+                  <div
+                    className="flex justify-between border-b border-slate-500 py-1"
+                    key={index}
+                  >
+                    <span className="font-medium">{altName?.iso_3166_1}</span>
+                    <span className="text-teal-500">{altName?.title}</span>
+                  </div>
+                );
+              })}
+            </>
+          ) : (
+            <div className="w-full py-2 flex items-center justify-center">
+              <div className="loader w-20 h-20 border-t-2 border-teal-500 rounded-full"></div>
             </div>
-            <div className="h-[80vh] overflow-hidden">
-              <img
-                src={`${imageUrlPrefix}/${info?.belongs_to_collection.poster_path}`}
-                alt="belong to path"
-                className="f-full"
-              />
-            </div>
-          </Carousel>
+          )}
         </div>
       </div>
     </>
