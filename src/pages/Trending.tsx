@@ -5,41 +5,36 @@ import { Link } from "react-router-dom";
 import { IMovie } from "../components/interfaces";
 import Loader from "../components/Loader";
 import MovieCard from "../components/MovieCard";
+import useFetch from "../Hooks/useFetch";
 
 type trendingDataType = IMovie | null;
 
+type fetchTrendingType = {
+  results: trendingDataType[];
+};
+
 const Trending = () => {
   const [trendingMovies, setTrendingMovies] = useState<trendingDataType[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [fetchError, setFetchError] = useState<boolean>(false);
   let baseUri: string = import.meta.env.VITE_BASE_URL;
   let apiKey: string = import.meta.env.VITE_API_KEY;
 
   const posterPrefix: string = import.meta.env.VITE_IMAGE_PREFIX;
   const trendingUrl: string = `${baseUri}/trending/movie/day?api_key=${apiKey}`;
 
-  const fetchTrending = async (url: string) => {
-    try {
-      setLoading(true);
-      const { data } = await axios.get(url);
-      setTrendingMovies(data.results);
-      setLoading(false);
-    } catch (err) {
-      setLoading(false);
-      setFetchError(true);
-    }
-  };
+  const { data, fetchError, loading } = useFetch<fetchTrendingType>({
+    url: trendingUrl,
+  });
 
   useEffect(() => {
-    fetchTrending(trendingUrl);
-  }, []);
+    data?.results && setTrendingMovies(data.results);
+  }, [trendingUrl, data]);
 
   if (loading) return <Loader />;
   if (fetchError) return <h1>Fetch Error ...</h1>;
 
   return (
     <>
-      <h1 className="text-xl px-2 py-2 text-slate-900 font-semibold">
+      <h1 className="text-xl px-2 py-2 text-slate-100 font-semibold">
         Trending Movies Of the day -
       </h1>
       <Carousel
@@ -73,13 +68,12 @@ const Trending = () => {
             );
           })}
       </Carousel>
-      <div className="py-2 flex gap-3 flex-wrap max-w-7xl mx-auto px-2">
+      <div className="py-8 flex gap-3 flex-wrap max-w-7xl mx-auto px-2">
         {trendingMovies &&
           trendingMovies.map((trending: trendingDataType) => {
             return <MovieCard movieObj={trending} key={trending?.id} />;
           })}
       </div>
-      {}
     </>
   );
 };

@@ -10,73 +10,53 @@ import useFetch from "../Hooks/useFetch";
 
 type info = IMovieInfo | null;
 
-type alternativeNames = {
+type alternativeNamesType = {
   iso_3166_1: string;
   title: string;
   type: string;
 } | null;
 
+type alternativeFetchType = {
+  id: number;
+  titles: alternativeNamesType[];
+} | null;
+
 type posters = {
-  file_path: string;
+  backdrops: [{ file_path: string }];
+  logos: [{ file_path: string }];
+  posters: [{ file_path: string }];
 } | null;
 
 const MovieInfo = () => {
-  const [info, setInfo] = useState<info>(null);
-  const [altNames, setAltNames] = useState<alternativeNames[]>([]);
-  const [posters, setPosters] = useState<posters[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [fetchError, setFetchError] = useState<boolean>(false);
+  const { id } = useParams();
+
   const apiKey: string = import.meta.env.VITE_API_KEY;
   const baseUri: string = import.meta.env.VITE_BASE_URL;
   const imageUrlPrefix: string = import.meta.env.VITE_IMAGE_PREFIX;
   const posterPrefix: string = import.meta.env.VITE_POSTER_PREFIX;
-  const { id } = useParams();
   const infoUri: string = `${baseUri}/movie/${id}?api_key=${apiKey}&language=en-US`;
-  const alternativeNameUri: string = `${baseUri}/movie/${id}/alternative_titles?api_key=${apiKey}`;
   const getMoviePostersUri: string = `${baseUri}/movie/${id}/images?api_key=${apiKey}`;
+  const alternativeNameUri: string = `${baseUri}/movie/${id}/alternative_titles?api_key=${apiKey}`;
 
-  const fetchAndReturnGetData = async (URI: string) => {
-    try {
-      const { data } = await axios.get(URI);
-      return data;
-    } catch (error) {
-      setLoading(false);
-      setFetchError(true);
-    }
-  };
-
-  const fetchMovieInfo = async (url: string) => {
-    try {
-      setLoading(true);
-      let infoData = await fetchAndReturnGetData(url);
-      setInfo(infoData);
-      setLoading(false);
-    } catch (error) {}
-  };
+  const [altNames, setAltNames] = useState<alternativeNamesType[]>([]);
+  const { data: info, loading, fetchError } = useFetch<info>({ url: infoUri });
+  const { data: posters } = useFetch<posters>({ url: getMoviePostersUri });
+  const { fetchOnAction } = useFetch<alternativeFetchType>({
+    url: alternativeNameUri,
+  });
 
   const setAlternativeNames = async (url: string) => {
-    try {
-      let names = await fetchAndReturnGetData(url);
-      setAltNames(names.titles);
-    } catch (error) {}
-  };
-
-  const getMoviePosters = async () => {
-    try {
-      let posters = await fetchAndReturnGetData(getMoviePostersUri);
-      setPosters(posters.backdrops);
-    } catch (error) {
-      console.log(error);
-    }
+    let altNamesData = await fetchOnAction(url);
+    altNamesData?.titles && setAltNames(altNamesData?.titles);
   };
 
   useEffect(() => {
-    fetchMovieInfo(infoUri);
-  }, []);
+    // console.log(posters);
+  }, [posters]);
 
   if (loading) return <Loader />;
-
   if (fetchError) return <div>Fetch Error... </div>;
+
   return (
     <>
       <div className="w-full">
@@ -92,7 +72,7 @@ const MovieInfo = () => {
       </div>
       <div className="px-3 py-4 bg-slate-900">
         <div className="space-y-2 mt-4 max-w-7xl mx-auto">
-          <h3 className="text-xl font-medium text-slate-900">
+          <h3 className="text-xl font-medium text-slate-100">
             Productions Companies-
           </h3>
           <div className="flex gap-2 items-center flex-wrap justify-between">
@@ -106,17 +86,17 @@ const MovieInfo = () => {
                   }
                   key={company.id}
                   alt="company"
-                  className="w-1/4 grayscale hover:grayscale-0 duration-100"
+                  className="w-1/4 opacity-40 hover:opacity-100 duration-100"
                 />
               );
             })}
           </div>
         </div>
         <div className="my-5 max-w-7xl mx-auto">
-          {posters.length === 0 && (
+          {!posters?.backdrops && (
             <button
               className="bg-slate-900 hover:bg-slate-800 duration-150 border border-slate-800 hover:border-transparent py-2 px-3 rounded text-white"
-              onClick={getMoviePosters}
+              // onClick={getMoviePosters}
             >
               get posters
             </button>
@@ -129,13 +109,13 @@ const MovieInfo = () => {
             interval={2000}
             infiniteLoop
           >
-            {posters &&
-              posters.map((poster) => {
+            {posters?.backdrops &&
+              posters.backdrops.map((backdrop) => {
                 return (
                   <img
-                    src={`${imageUrlPrefix}/${poster?.file_path}`}
-                    alt="poster"
-                    key={poster?.file_path}
+                    src={`${imageUrlPrefix}/${backdrop?.file_path}`}
+                    alt="backdrop"
+                    key={backdrop?.file_path}
                   />
                 );
               })}
@@ -215,7 +195,7 @@ const MovieInfo = () => {
               get alternative Names
             </button>
           )}
-          {altNames ? (
+          {altNames && (
             <>
               <h1 className="text-2xl font-semibold">Alternate Names</h1>
               {altNames.map((altName, index) => {
@@ -230,10 +210,6 @@ const MovieInfo = () => {
                 );
               })}
             </>
-          ) : (
-            <div className="w-full py-2 flex items-center justify-center">
-              <div className="loader w-20 h-20 border-t-2 border-teal-500 rounded-full"></div>
-            </div>
           )}
         </div>
       </div>

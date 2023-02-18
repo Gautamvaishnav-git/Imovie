@@ -63,7 +63,7 @@ const Home = () => {
           })}
       </Carousel>
 
-      <div className="flex flex-wrap w-full max-w-7xl mx-auto gap-3 p-2">
+      <div className="flex flex-wrap w-full max-w-7xl mx-auto gap-3 px-2 py-10">
         {movieList &&
           movieList.map((movie: movieData) => (
             <MovieCard movieObj={movie} key={movie?.id} />

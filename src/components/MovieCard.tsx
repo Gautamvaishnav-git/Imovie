@@ -9,9 +9,9 @@ const MovieCard = ({ movieObj }: { movieObj: movieDataType }) => {
   return (
     <Link
       to={`/movie/${String(movieObj?.id)}`}
-      className="flex flex-col shadow grow w-full sm:w-1/3 md:w-1/5 overflow-hidden rounded-md bg-slate-900 "
+      className="flex flex-col shadow grow w-full sm:w-1/3 md:w-1/5 overflow-hidden rounded-md bg-slate-900 hover:shadow-none hover:scale-[1.03] duration-150"
     >
-      <div className="w-full relative h-fit overflow-hidden rounded-md shadow-md movieBox">
+      <div className="w-full relative h-fit overflow-hidden rounded-md shadow-md movieBox hover:shadow-none">
         <img
           className="w-full"
           src={`${posterPrefix}/${movieObj?.poster_path}`}
@@ -19,9 +19,7 @@ const MovieCard = ({ movieObj }: { movieObj: movieDataType }) => {
           draggable="false"
         />
         <div className="info w-full h-full bg-gradient-to-t from-slate-900 absolute -bottom-[100%] pl-2 py-1 flex flex-col justify-end">
-          <h2 className="text-md text-white w-4/5">
-            {movieObj?.title}
-          </h2>
+          <h2 className="text-md text-white w-4/5">{movieObj?.title}</h2>
           <h3 className="text-xs text-gray-300">{movieObj?.release_date}</h3>
         </div>
         <div className="absolute bottom-1 right-2 w-8 h-8 text-xs bg-transparent rounded-full flex items-center justify-center shadow border-2">

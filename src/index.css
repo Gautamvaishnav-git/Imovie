@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 @layer {
+  body {
+    @apply bg-slate-900;
+  }
   ::-webkit-scrollbar {
     width: 10px;
   }
@@ -26,7 +29,7 @@
 }
 
 .active {
-  @apply bg-teal-600 text-white;
+  @apply bg-teal-600/40 backdrop-blur-sm text-white;
   transition: all 0.2s ease-in;
 }
 
