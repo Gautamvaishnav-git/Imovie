@@ -189,7 +189,7 @@ const MovieInfo = () => {
         <div className="flex flex-col gap-2 bg-slate-800 p-2 my-2 rounded max-w-7xl mx-auto">
           {altNames.length === 0 && (
             <button
-              className="px-4 py-2 hover:bg-slate-600 duration-150 capitalize w-fit rounded text-white border border-slate-700"
+              className="btn"
               onClick={() => setAlternativeNames(alternativeNameUri)}
             >
               get alternative Names
