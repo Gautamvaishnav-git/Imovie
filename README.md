@@ -7,7 +7,7 @@ IMovie is a web app that created React and Typescript with best code Practices.
 
 - Home
 - Trending
-- Tv Shows
+- Search
 
 will be adding further.
 
