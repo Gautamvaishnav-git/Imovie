@@ -50,10 +50,6 @@ const MovieInfo = () => {
     altNamesData?.titles && setAltNames(altNamesData?.titles);
   };
 
-  useEffect(() => {
-    // console.log(posters);
-  }, [posters]);
-
   if (loading) return <Loader />;
   if (fetchError) return <div>Fetch Error... </div>;
 
@@ -110,12 +106,13 @@ const MovieInfo = () => {
             infiniteLoop
           >
             {posters?.backdrops &&
-              posters.backdrops.map((backdrop) => {
+              posters.backdrops.slice(0, 8).map((backdrop) => {
                 return (
                   <img
                     src={`${imageUrlPrefix}/${backdrop?.file_path}`}
                     alt="backdrop"
                     key={backdrop?.file_path}
+                    loading="lazy"
                   />
                 );
               })}

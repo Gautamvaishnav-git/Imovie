@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { IMovie } from "../components/interfaces";
 
+import notAvailable from "../assets/notAvailable.webp";
+
 type movieDataType = IMovie | null;
 
 const MovieCard = ({ movieObj }: { movieObj: movieDataType }) => {
@@ -11,10 +13,14 @@ const MovieCard = ({ movieObj }: { movieObj: movieDataType }) => {
       to={`/movie/${String(movieObj?.id)}`}
       className="flex flex-col shadow grow w-full sm:w-1/3 md:w-1/5 overflow-hidden rounded-md bg-slate-900 hover:shadow-none hover:scale-[1.03] duration-300 ease-in"
     >
-      <div className="w-full relative h-fit overflow-hidden rounded-md shadow-md movieBox hover:shadow-none">
+      <div className="w-full relative h-fit overflow-hidden rounded-md movieBox">
         <img
           className="w-full"
-          src={`${posterPrefix}/${movieObj?.poster_path}`}
+          src={
+            movieObj?.poster_path
+              ? `${posterPrefix}/${movieObj?.poster_path}`
+              : notAvailable
+          }
           alt="poster"
           draggable="false"
         />

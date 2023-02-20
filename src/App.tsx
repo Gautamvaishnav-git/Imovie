@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import FourOFour from "./pages/FourOFour";
 import Home from "./pages/Home";
 import MovieInfo from "./pages/MovieInfo";
+import Search from "./pages/Search";
 import Trending from "./pages/Trending";
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/movie/:id" element={<MovieInfo />} />
         <Route path="/trending" element={<Trending />} />
+        <Route path="/search" element={<Search />} />
         <Route path="*" element={<FourOFour />} />
       </Routes>
     </BrowserRouter>

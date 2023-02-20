@@ -37,6 +37,27 @@
   @apply px-4 py-2 hover:bg-slate-600 duration-150 capitalize w-fit rounded text-white border border-slate-700;
 }
 
+.showNav {
+  animation: show 0.5s ease-in alternate;
+  top: 0;
+  z-index: 9999;
+}
+
+.hideNav {
+  top: -100px;
+  z-index: 9999;
+  transition: all 0.5s ease-in;
+}
+
+@keyframes show {
+  from {
+    transform: translateY(-10%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+
 @keyframes loading {
   from {
     transform: rotate(0deg);
