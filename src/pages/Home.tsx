@@ -47,17 +47,14 @@ const Home = () => {
                 <img
                   src={`${posterPrefix}/${movie?.backdrop_path}`}
                   alt="Movie"
+                  loading="lazy"
                 />
-                <div className="absolute bottom-0 h-1/2 w-full bg-gradient-to-t from-slate-900/50 flex flex-col justify-end items-start z-2">
-                  <div className="px-2 py-2">
-                    <Link
-                      to={`/movie/${String(movie?.id)}`}
-                      className="text-xl font-semibold text-teal-500 bg-slate-900 px-2 py-1 rounded"
-                    >
-                      {movie?.title}
-                    </Link>
-                  </div>
-                </div>
+                <Link
+                  to={`/movie/${String(movie?.id)}`}
+                  className="text-xl font-semibold text-teal-500 bg-slate-900 px-2 py-1 rounded-t-md absolute bottom-0 left-0 h-fit w-fit z-4"
+                >
+                  {movie?.title}
+                </Link>
               </div>
             );
           })}

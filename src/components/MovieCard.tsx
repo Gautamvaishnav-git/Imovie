@@ -16,6 +16,7 @@ const MovieCard = ({ movieObj }: { movieObj: movieDataType }) => {
       <div className="w-full relative h-fit overflow-hidden rounded-md movieBox">
         <img
           className="w-full"
+          loading="lazy"
           src={
             movieObj?.poster_path
               ? `${posterPrefix}/${movieObj?.poster_path}`
