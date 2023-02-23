@@ -11,8 +11,13 @@ type fetchMoviesList = {
   items: IMovie[] | null;
 };
 
+type genreType = {
+  genres: [{ id: number; name: string }];
+};
+
 const Home = () => {
   const [movieList, setMovieList] = useState<IMovie[]>();
+  const [genreUri, setGenreUri] = useState<string>("");
   const apiKey: string = import.meta.env.VITE_API_KEY;
   const baseUri: string = import.meta.env.VITE_BASE_URL;
   const moviesListBaseURI: URL = new URL("3/list/1", baseUri);
@@ -22,12 +27,25 @@ const Home = () => {
     url: href,
   });
 
+  const genres: string = `${baseUri}/genre/movie/list?api_key=${apiKey}`;
+  const { data: genreList } = useFetch<genreType>({ url: genres });
+  const { data: movieListByGenres } = useFetch<{ results: IMovie[] }>({
+    url: genreUri,
+  });
+
+  const filterByGenres = (genreName: string) => {
+    let genreUriCreated = `${baseUri}/discover/movie?api_key=${apiKey}&sort_by=popularity.desc&with_genres=${genreName}&with_watch_monetization_types=ads`;
+    setGenreUri(genreUriCreated);
+    setMovieList(movieListByGenres?.results);
+  };
+
   useEffect(() => {
     data?.items && setMovieList(data?.items);
   }, [data]);
 
   if (loading) return <Loader />;
-  if (fetchError) return <h1>Fetch Error ...</h1>;
+  if (fetchError)
+    return <h1 className="text-white font-2xl">Fetch Error ...</h1>;
 
   return (
     <>
@@ -59,6 +77,21 @@ const Home = () => {
             );
           })}
       </Carousel>
+
+      <div className="pt-6 px-2 flex flex-wrap gap-3 items-center justify-center">
+        {genreList?.genres &&
+          genreList?.genres.map((genre) => {
+            return (
+              <button
+                key={genre.id}
+                className="py-2 px-3 bg-slate-800 text-slate-300 hover:bg-teal-900/70 rounded duration-150"
+                onClick={() => filterByGenres(genre.name)}
+              >
+                {genre.name}
+              </button>
+            );
+          })}
+      </div>
 
       <div className="flex flex-wrap w-full max-w-7xl mx-auto gap-3 px-2 py-10">
         {movieList &&

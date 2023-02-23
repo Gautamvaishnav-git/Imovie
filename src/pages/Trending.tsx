@@ -42,32 +42,6 @@ const Trending = () => {
 
   return (
     <>
-      <div className="flex py-2 px-2 justify-between items-center">
-        <h1 className="text-xl text-slate-100 font-semibold">
-          Trending Movies Of the {trendingFrom} -
-        </h1>
-        <div
-          className="text-sm cursor-pointer rounded-xl overflow-hidden text-white border border-teal-600 h-auto"
-          onClick={trendingFromToggle}
-        >
-          <span
-            className="bg-teal-500 py-2 px-3 duration-200"
-            style={{
-              background: trendingFrom === "day" ? "teal" : "transparent",
-            }}
-          >
-            day
-          </span>
-          <span
-            className="bg-teal-500 py-2 px-3 duration-200"
-            style={{
-              background: trendingFrom === "day" ? "transparent" : "teal",
-            }}
-          >
-            week
-          </span>
-        </div>
-      </div>
       <Carousel
         showArrows={false}
         showThumbs={false}
@@ -99,6 +73,33 @@ const Trending = () => {
             );
           })}
       </Carousel>
+      <div className="flex pt-4 px-2 justify-between items-center">
+        <h1 className="text-xl text-slate-100 font-semibold">
+          Trending Movies Of the {trendingFrom} -
+        </h1>
+        <div
+          className="text-sm cursor-pointer rounded-xl overflow-hidden text-white border border-teal-600 h-auto"
+          onClick={trendingFromToggle}
+        >
+          <span
+            className="bg-teal-500 py-2 px-3 duration-200"
+            style={{
+              background: trendingFrom === "day" ? "teal" : "transparent",
+            }}
+          >
+            day
+          </span>
+          <span
+            className="bg-teal-500 py-2 px-3 duration-200"
+            style={{
+              background: trendingFrom === "day" ? "transparent" : "teal",
+            }}
+          >
+            week
+          </span>
+        </div>
+      </div>
+
       <div className="py-8 flex gap-3 flex-wrap max-w-7xl mx-auto px-2">
         {trendingMovies &&
           trendingMovies.map((trending: trendingDataType) => {
