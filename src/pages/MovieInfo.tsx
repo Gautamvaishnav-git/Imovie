@@ -14,6 +14,9 @@ interface info extends IMovieInfo {
     logos: [{ file_path: string }];
     posters: [{ file_path: string }];
   };
+  alternative_titles: {
+    titles: [{ iso_3166_1: string; title: string; type: string }];
+  };
 }
 
 type alternativeNamesType = {
@@ -29,24 +32,13 @@ type alternativeFetchType = {
 
 const MovieInfo = () => {
   const { id } = useParams();
-
   const apiKey: string = import.meta.env.VITE_API_KEY;
   const baseUri: string = import.meta.env.VITE_BASE_URL;
   const imageUrlPrefix: string = import.meta.env.VITE_IMAGE_PREFIX;
   const posterPrefix: string = import.meta.env.VITE_POSTER_PREFIX;
-  const infoUri: string = `${baseUri}/movie/${id}?api_key=${apiKey}&append_to_response=images`;
-  const alternativeNameUri: string = `${baseUri}/movie/${id}/alternative_titles?api_key=${apiKey}`;
+  const infoUri: string = `${baseUri}/movie/${id}?api_key=${apiKey}&append_to_response=images,alternative_titles`;
 
-  const [altNames, setAltNames] = useState<alternativeNamesType[]>([]);
   const { data: info, loading, fetchError } = useFetch<info>({ url: infoUri });
-  const { fetchOnAction } = useFetch<alternativeFetchType>({
-    url: alternativeNameUri,
-  });
-
-  const setAlternativeNames = async (url: string) => {
-    let altNamesData = await fetchOnAction(url);
-    altNamesData?.titles && setAltNames(altNamesData?.titles);
-  };
 
   useEffect(() => {
     setTimeout(() => {
@@ -180,18 +172,10 @@ const MovieInfo = () => {
           </a>
         </div>
         <div className="flex flex-col gap-2 bg-slate-800 p-2 my-2 rounded max-w-7xl mx-auto">
-          {altNames.length === 0 && (
-            <button
-              className="btn"
-              onClick={() => setAlternativeNames(alternativeNameUri)}
-            >
-              get alternative Names
-            </button>
-          )}
-          {altNames && (
+          {info?.alternative_titles?.titles && (
             <>
               <h1 className="text-2xl font-semibold">Alternate Names</h1>
-              {altNames.map((altName, index) => {
+              {info?.alternative_titles?.titles.map((altName, index) => {
                 return (
                   <div
                     className="flex justify-between border-b border-slate-500 py-1"
