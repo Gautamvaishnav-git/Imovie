@@ -63,7 +63,7 @@ const Trending = () => {
                   <div className="px-2 py-2">
                     <Link
                       to={`/movie/${String(trending?.id)}`}
-                      className="text-xl font-semibold text-teal-500 bg-slate-900 px-2 py-1 rounded"
+                      className="text-xl font-semibold text-teal-500 bg-slate-900 px-2 py-1 rounded sm:block hidden"
                     >
                       {trending?.title}
                     </Link>
@@ -73,7 +73,7 @@ const Trending = () => {
             );
           })}
       </Carousel>
-      <div className="flex pt-4 px-2 justify-between items-center">
+      <div className="flex sm:flex-row flex-col gap-2 sm:gap-0 pt-4 px-2 justify-between items-center">
         <h1 className="text-xl text-slate-100 font-semibold">
           Trending Movies Of the {trendingFrom} -
         </h1>

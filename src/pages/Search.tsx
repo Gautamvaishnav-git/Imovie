@@ -62,9 +62,6 @@ const Search = () => {
           </div>
         )}
         <div className="px-3 py-4 w-full">
-          <h1 className="text-xl text-teal-500 font-bold pb-4">
-            Trending Of the day --
-          </h1>
           {loading && <Loader />}
           <div className="flex flex-wrap gap-4 w-full items-stretch">
             {searchList?.length === 0 &&

@@ -25,7 +25,7 @@ const MovieCard = ({ movieObj }: { movieObj: movieDataType }) => {
           alt="poster"
           draggable="false"
         />
-        <div className="info w-full h-full bg-gradient-to-t from-slate-900 absolute -bottom-[100%] pl-2 py-1 flex flex-col justify-end">
+        <div className="info w-full h-full bg-gradient-to-t from-slate-900 absolute sm:-bottom-[100%] pl-2 py-1 flex flex-col justify-end bottom-0">
           <h2 className="text-md text-white w-4/5">{movieObj?.title}</h2>
           <h3 className="text-xs text-gray-300">{movieObj?.release_date}</h3>
         </div>

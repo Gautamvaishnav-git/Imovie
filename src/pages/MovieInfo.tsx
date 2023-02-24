@@ -1,5 +1,3 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { IMovieInfo } from "../components/interfaces";
 import notAvailable from "../assets/notAvailable.webp";
@@ -19,17 +17,6 @@ interface info extends IMovieInfo {
   };
 }
 
-type alternativeNamesType = {
-  iso_3166_1: string;
-  title: string;
-  type: string;
-} | null;
-
-type alternativeFetchType = {
-  id: number;
-  titles: alternativeNamesType[];
-} | null;
-
 const MovieInfo = () => {
   const { id } = useParams();
   const apiKey: string = import.meta.env.VITE_API_KEY;
@@ -39,12 +26,6 @@ const MovieInfo = () => {
   const infoUri: string = `${baseUri}/movie/${id}?api_key=${apiKey}&append_to_response=images,alternative_titles`;
 
   const { data: info, loading, fetchError } = useFetch<info>({ url: infoUri });
-
-  useEffect(() => {
-    setTimeout(() => {
-      console.log(info);
-    }, 1000);
-  }, []);
 
   if (loading) return <Loader />;
   if (fetchError) return <div>Fetch Error... </div>;
@@ -61,6 +42,16 @@ const MovieInfo = () => {
           className="w-full"
           alt="poster"
         />
+      </div>
+      <div className="flex flex-col gap-2 py-3 px-3 items-start">
+        <h1 className="text-white text-xl">Genres -</h1>
+        <div className="flex gap-2 items-center">
+          {info?.genres.map((genre) => (
+            <button className="px-2 py-1 bg-slate-800 text-white rounded border border-teal-500/10 w-fit sm:grow-0 grow">
+              {genre.name}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="px-3 py-4 bg-slate-900">
         <div className="space-y-2 mt-4 max-w-7xl mx-auto">
@@ -117,7 +108,7 @@ const MovieInfo = () => {
           </h1>
           <p className="text-md text-slate-400 leading-5">{info?.overview}</p>
           <div className="py-2 bg-slate-800 rounded px-2 flex flex-col gap-2 capitalize">
-            <div className="flex justify-between border-b border-slate-600 py-1">
+            <div className="flex sm:flex-row flex-col justify-between border-b border-slate-600 py-1">
               <span className="font-medium">budget</span>
               <span className="text-teal-500">
                 {Intl.NumberFormat("en-us", {
@@ -126,39 +117,39 @@ const MovieInfo = () => {
                 }).format(Number(info?.budget))}
               </span>
             </div>
-            <div className="flex justify-between border-b border-slate-600 py-1">
+            <div className="flex sm:flex-row flex-col justify-between border-b border-slate-600 py-1">
               <span className="font-medium">original title</span>
               <span className="text-teal-500">{info?.original_title}</span>
             </div>
-            <div className="flex justify-between border-b border-slate-600 py-1">
+            <div className="flex sm:flex-row flex-col justify-between border-b border-slate-600 py-1">
               <span className="font-medium">Original Language</span>
               <span className="text-teal-500">{info?.original_language}</span>
             </div>
-            <div className="flex justify-between border-b border-slate-600 py-1">
+            <div className="flex sm:flex-row flex-col justify-between border-b border-slate-600 py-1">
               <span className="font-medium">tagline</span>
               <span className="text-teal-500">{info?.tagline}</span>
             </div>
-            <div className="flex justify-between border-b border-slate-600 py-1">
+            <div className="flex sm:flex-row flex-col justify-between border-b border-slate-600 py-1">
               <span className="font-medium">popularity</span>
               <span className="text-teal-500">{info?.popularity}</span>
             </div>
-            <div className="flex justify-between border-b border-slate-600 py-1">
+            <div className="flex sm:flex-row flex-col justify-between border-b border-slate-600 py-1">
               <span className="font-medium">release date</span>
               <span className="text-teal-500">{info?.release_date}</span>
             </div>
-            <div className="flex justify-between border-b border-slate-600 py-1">
+            <div className="flex sm:flex-row flex-col justify-between border-b border-slate-600 py-1">
               <span className="font-medium">revenue</span>
               <span className="text-teal-500">{info?.revenue}</span>
             </div>
-            <div className="flex justify-between border-b border-slate-600 py-1">
+            <div className="flex sm:flex-row flex-col justify-between border-b border-slate-600 py-1">
               <span className="font-medium">runtime</span>
               <span className="text-teal-500">{info?.runtime}</span>
             </div>
-            <div className="flex justify-between border-b border-slate-600 py-1">
+            <div className="flex sm:flex-row flex-col justify-between border-b border-slate-600 py-1">
               <span className="font-medium">vote average</span>
               <span className="text-teal-500">{info?.vote_count}</span>
             </div>
-            <div className="flex justify-between border-b border-slate-600 py-1">
+            <div className="flex sm:flex-row flex-col justify-between border-b border-slate-600 py-1">
               <span className="font-medium">vote count</span>
               <span className="text-teal-500">{info?.vote_average}</span>
             </div>
@@ -178,7 +169,7 @@ const MovieInfo = () => {
               {info?.alternative_titles?.titles.map((altName, index) => {
                 return (
                   <div
-                    className="flex justify-between border-b border-slate-500 py-1"
+                    className="flex sm:flex-row flex-col justify-between border-b border-slate-500 py-1"
                     key={index}
                   >
                     <span className="font-medium">{altName?.iso_3166_1}</span>

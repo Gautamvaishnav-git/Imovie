@@ -69,7 +69,7 @@ const Home = () => {
                 />
                 <Link
                   to={`/movie/${String(movie?.id)}`}
-                  className="text-xl font-semibold text-teal-500 bg-slate-900 px-2 py-1 rounded-t-md absolute bottom-0 left-0 h-fit w-fit z-4"
+                  className="text-xl font-semibold text-teal-500 bg-slate-900 px-2 py-1 rounded-t-md absolute bottom-0 left-0 h-fit w-fit z-4 sm:block hidden"
                 >
                   {movie?.title}
                 </Link>
@@ -84,7 +84,7 @@ const Home = () => {
             return (
               <button
                 key={genre.id}
-                className="py-2 px-3 bg-slate-800 text-slate-300 hover:bg-teal-900/70 rounded duration-150"
+                className="py-2 px-3 bg-slate-800 text-slate-300 hover:bg-teal-900/70 rounded duration-150 sm:grow-0 grow"
                 onClick={() => filterByGenres(genre.name)}
               >
                 {genre.name}
