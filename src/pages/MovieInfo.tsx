@@ -8,7 +8,13 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Loader from "../components/Loader";
 import useFetch from "../Hooks/useFetch";
 
-type info = IMovieInfo | null;
+interface info extends IMovieInfo {
+  images: {
+    backdrops: [{ file_path: string }];
+    logos: [{ file_path: string }];
+    posters: [{ file_path: string }];
+  };
+}
 
 type alternativeNamesType = {
   iso_3166_1: string;
@@ -21,12 +27,6 @@ type alternativeFetchType = {
   titles: alternativeNamesType[];
 } | null;
 
-type posters = {
-  backdrops: [{ file_path: string }];
-  logos: [{ file_path: string }];
-  posters: [{ file_path: string }];
-} | null;
-
 const MovieInfo = () => {
   const { id } = useParams();
 
@@ -34,13 +34,11 @@ const MovieInfo = () => {
   const baseUri: string = import.meta.env.VITE_BASE_URL;
   const imageUrlPrefix: string = import.meta.env.VITE_IMAGE_PREFIX;
   const posterPrefix: string = import.meta.env.VITE_POSTER_PREFIX;
-  const infoUri: string = `${baseUri}/movie/${id}?api_key=${apiKey}&language=en-US`;
-  const getMoviePostersUri: string = `${baseUri}/movie/${id}/images?api_key=${apiKey}`;
+  const infoUri: string = `${baseUri}/movie/${id}?api_key=${apiKey}&append_to_response=images`;
   const alternativeNameUri: string = `${baseUri}/movie/${id}/alternative_titles?api_key=${apiKey}`;
 
   const [altNames, setAltNames] = useState<alternativeNamesType[]>([]);
   const { data: info, loading, fetchError } = useFetch<info>({ url: infoUri });
-  const { data: posters } = useFetch<posters>({ url: getMoviePostersUri });
   const { fetchOnAction } = useFetch<alternativeFetchType>({
     url: alternativeNameUri,
   });
@@ -49,6 +47,12 @@ const MovieInfo = () => {
     let altNamesData = await fetchOnAction(url);
     altNamesData?.titles && setAltNames(altNamesData?.titles);
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      console.log(info);
+    }, 1000);
+  }, []);
 
   if (loading) return <Loader />;
   if (fetchError) return <div>Fetch Error... </div>;
@@ -89,14 +93,6 @@ const MovieInfo = () => {
           </div>
         </div>
         <div className="my-5 max-w-7xl mx-auto">
-          {!posters?.backdrops && (
-            <button
-              className="bg-slate-900 hover:bg-slate-800 duration-150 border border-slate-800 hover:border-transparent py-2 px-3 rounded text-white"
-              // onClick={getMoviePosters}
-            >
-              get posters
-            </button>
-          )}
           <Carousel
             showArrows={false}
             showThumbs={false}
@@ -105,8 +101,8 @@ const MovieInfo = () => {
             interval={2000}
             infiniteLoop
           >
-            {posters?.backdrops &&
-              posters.backdrops.slice(0, 8).map((backdrop) => {
+            {info?.images.backdrops &&
+              info?.images.backdrops.slice(0, 8).map((backdrop) => {
                 return (
                   <img
                     src={`${imageUrlPrefix}/${backdrop?.file_path}`}
